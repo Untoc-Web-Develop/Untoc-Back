@@ -12,7 +12,7 @@ export class Apply extends BaseEntity {
   studentId: string;
 
   @Column({ name: 'phone_number' })
-  phone_number: string;
+  phoneNumber: string;
 
   @Column({ name: 'email' })
   email: string;
