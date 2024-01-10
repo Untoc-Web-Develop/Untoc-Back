@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 import { ApplyQuestion } from './apply-question.entity';
 import { Apply } from './apply.entity';
@@ -9,9 +9,11 @@ export class ApplyValue extends BaseEntity {
   @Column({ name: 'value' })
   value: string;
 
-  @ManyToOne(() => Apply, (apply) => apply.id)
+  @ManyToOne(() => Apply, (apply) => apply.applyValues)
+  @JoinColumn({ name: 'apply_id' })
   apply: Apply;
 
-  @ManyToOne(() => ApplyQuestion, (applyQuestion) => applyQuestion.id)
+  @ManyToOne(() => ApplyQuestion, (applyQuestion) => applyQuestion.values)
+  @JoinColumn({ name: 'apply_question_id' })
   applyQuestion: ApplyQuestion;
 }
