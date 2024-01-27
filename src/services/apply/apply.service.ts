@@ -6,7 +6,9 @@ import { ApplyValue } from 'src/entities/apply-value.entity';
 import { Apply } from 'src/entities/apply.entity';
 import { Repository } from 'typeorm';
 
+import { GetApplyQuestionResponseDto } from './dto/get-apply-question.dto';
 import { GetApplySettingResponseDto } from './dto/get-apply-setting.dto';
+import { PostApplyQuestionResponseDto } from './dto/post-apply-question.dto';
 import {
   PostApplySettingRequestDto,
   PostApplySettingResponseDto,
@@ -64,5 +66,41 @@ export class ApplyService {
 
   async deleteApplySetting(id: string): Promise<void> {
     await this.applySettingRepository.delete({ id: id });
+  }
+
+  async createApplyQuestion(
+    newApplyQuestion: string,
+  ): Promise<PostApplyQuestionResponseDto> {
+    const applyQuestion = await this.applyQuestionRepository.save({
+      question: newApplyQuestion,
+    });
+
+    return {
+      id: applyQuestion.id,
+    };
+  }
+
+  async findAllApplyQuestion(): Promise<GetApplyQuestionResponseDto> {
+    const applyQuestions: Array<ApplyQuestion> =
+      await this.applyQuestionRepository.find();
+
+    return applyQuestions.map((applyQuestion) => ({
+      id: applyQuestion.id,
+      question: applyQuestion.question,
+    }));
+  }
+
+  async updateApplyQuestion(
+    id: string,
+    newApplyQuestion: string,
+  ): Promise<void> {
+    await this.applyQuestionRepository.update(
+      { id: id },
+      { question: newApplyQuestion },
+    );
+  }
+
+  async deleteApplyQuestion(id: string): Promise<void> {
+    await this.applyQuestionRepository.delete({ id: id });
   }
 }

@@ -13,6 +13,6 @@ export class ApplySetting extends BaseEntity {
   @Column({ name: 'close_at' })
   closeAt: Date;
 
-  @Column({ name: 'content ' })
+  @Column({ name: 'content' })
   content: string;
 }
