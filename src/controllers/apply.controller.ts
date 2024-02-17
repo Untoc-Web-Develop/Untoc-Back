@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { GetApplyQuestionResponseDto } from 'src/services/apply/dto/get-apply-question.dto';
 import { GetApplySettingResponseDto } from 'src/services/apply/dto/get-apply-setting.dto';
 import { GetApplyResponseDto } from 'src/services/apply/dto/get-apply.dto';
@@ -52,8 +61,8 @@ export class ApplyController {
   }
 
   @Delete('/apply-setting')
-  async deleteApplySetting(@Body() request: { id: string }): Promise<void> {
-    await this.applyService.deleteApplySetting(request.id);
+  async deleteApplySetting(@Query('id') id: string): Promise<void> {
+    await this.applyService.deleteApplySetting(id);
   }
 
   @Get('/apply-question')
@@ -86,7 +95,7 @@ export class ApplyController {
   }
 
   @Delete('/apply-question')
-  async deleteApplyQuestion(@Body() request: { id: string }): Promise<void> {
-    await this.applyService.deleteApplyQuestion(request.id);
+  async deleteApplyQuestion(@Query('id') id: string): Promise<void> {
+    await this.applyService.deleteApplyQuestion(id);
   }
 }
