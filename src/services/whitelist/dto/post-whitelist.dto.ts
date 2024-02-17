@@ -1,9 +1,10 @@
-export class PostWhitelistRequestDto {
-  phoneNumber: string;
-  email: string;
-  studentId: string;
-}
+import { PickType } from '@nestjs/swagger';
+import { Whitelist } from 'src/entities/whitelist.entity';
 
-export class PostWhitelistResponseDto {
-  id: string;
-}
+export class PostWhitelistRequestDto extends PickType(Whitelist, [
+  'phoneNumber',
+  'email',
+  'studentId',
+]) {}
+
+export class PostWhitelistResponseDto extends PickType(Whitelist, ['id']) {}

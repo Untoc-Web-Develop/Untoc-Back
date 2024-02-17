@@ -17,6 +17,9 @@ export class User extends BaseEntity {
   @Column({ name: 'password' })
   password: string;
 
+  @Column({ name: 'refresh_token', nullable: true })
+  refreshToken: string;
+
   @Column({ name: 'phone_number', unique: true })
   phoneNumber: string;
 
