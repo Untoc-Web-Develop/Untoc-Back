@@ -51,16 +51,26 @@ export class ApplyController {
 
   @Post('/apply-question')
   async createApplyQuestion(
-    @Body() request: { question: string },
+    @Body() request: { question: string; description: string },
   ): Promise<PostApplyQuestionResponseDto> {
-    return await this.applyService.createApplyQuestion(request.question);
+    return await this.applyService.createApplyQuestion(request);
   }
 
   @Patch('/apply-question')
   async updateApplyQuestion(
-    @Body() request: { id: string; question: string },
+    @Body()
+    request: {
+      id: string;
+      newApplyQuestion: {
+        question: string;
+        description: string;
+      };
+    },
   ): Promise<void> {
-    await this.applyService.updateApplyQuestion(request.id, request.question);
+    await this.applyService.updateApplyQuestion(
+      request.id,
+      request.newApplyQuestion,
+    );
   }
 
   @Delete('/apply-question')

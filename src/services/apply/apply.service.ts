@@ -63,11 +63,13 @@ export class ApplyService {
     await this.applySettingRepository.delete({ id: id });
   }
 
-  async createApplyQuestion(
-    newApplyQuestion: string,
-  ): Promise<PostApplyQuestionResponseDto> {
+  async createApplyQuestion(newApplyQuestion: {
+    question: string;
+    description: string;
+  }): Promise<PostApplyQuestionResponseDto> {
     const applyQuestion = await this.applyQuestionRepository.save({
-      question: newApplyQuestion,
+      question: newApplyQuestion.question,
+      description: newApplyQuestion.description,
     });
 
     return {
@@ -82,16 +84,23 @@ export class ApplyService {
     return applyQuestions.map((applyQuestion) => ({
       id: applyQuestion.id,
       question: applyQuestion.question,
+      description: applyQuestion.description,
     }));
   }
 
   async updateApplyQuestion(
     id: string,
-    newApplyQuestion: string,
+    newApplyQuestion: {
+      question: string;
+      description: string;
+    },
   ): Promise<void> {
     await this.applyQuestionRepository.update(
       { id: id },
-      { question: newApplyQuestion },
+      {
+        question: newApplyQuestion.question,
+        description: newApplyQuestion.description,
+      },
     );
   }
 
