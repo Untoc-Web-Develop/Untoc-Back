@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import ERROR from 'src/ common/error';
+import ERROR from 'src/common/error';
 import { RegisterRequestDto } from 'src/auth/dto/register.dto';
 import { AccessPayload } from 'src/auth/payload/access.payload';
 import { RefreshPayload } from 'src/auth/payload/refresh.payload';
