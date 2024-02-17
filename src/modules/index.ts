@@ -1,3 +1,5 @@
 import { WhitelistModule } from 'src/modules/whitelist.module';
 
-export default [WhitelistModule];
+import { ApplyModule } from './apply.module';
+
+export default [WhitelistModule, ApplyModule];
