@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from 'src/auth/auth.module';
 import entities from 'src/entities';
 import modules from 'src/modules';
 
@@ -19,6 +20,7 @@ import modules from 'src/modules';
       entities: entities,
       synchronize: process?.env?.MODE === 'DEV' ? true : false,
     }),
+    AuthModule,
     ...modules,
   ],
 })
