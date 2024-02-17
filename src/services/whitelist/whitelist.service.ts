@@ -18,14 +18,16 @@ export class WhitelistService {
   async findAll(): Promise<GetWhiteListResponseDto> {
     const whitelists: Array<Whitelist> = await this.whitelistRepository.find();
 
-    return whitelists.map((whitelist) => ({
-      id: whitelist.id,
-      phoneNumber: whitelist.phoneNumber,
-      email: whitelist.email,
-      studentId: whitelist.studentId,
-      createdAt: whitelist.createdAt,
-      updatedAt: whitelist.updatedAt,
-    }));
+    return {
+      whitelists: whitelists.map((whitelist) => ({
+        id: whitelist.id,
+        phoneNumber: whitelist.phoneNumber,
+        email: whitelist.email,
+        studentId: whitelist.studentId,
+        createdAt: whitelist.createdAt,
+        updatedAt: whitelist.updatedAt,
+      })),
+    };
   }
 
   async create(

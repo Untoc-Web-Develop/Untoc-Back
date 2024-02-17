@@ -1,9 +1,15 @@
-import { BaseDto } from 'src/common/dto/base.dto';
+import { ApiProperty, PickType } from '@nestjs/swagger';
+import { baseDtoKey } from 'src/entities/base.entity';
+import { Whitelist } from 'src/entities/whitelist.entity';
 
-class WhitelistDto extends BaseDto {
-  phoneNumber: string;
-  email: string;
-  studentId: string;
+class WhiteListDto extends PickType(Whitelist, [
+  ...baseDtoKey,
+  'phoneNumber',
+  'email',
+  'studentId',
+]) {}
+
+export class GetWhiteListResponseDto {
+  @ApiProperty({ type: [WhiteListDto] })
+  whitelists: WhiteListDto[];
 }
-
-export class GetWhiteListResponseDto extends Array<WhitelistDto> {}
