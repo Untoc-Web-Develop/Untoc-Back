@@ -1,7 +1,9 @@
+import { About } from 'src/entities/about.entity';
 import { BadgeLog } from 'src/entities/badge-log.entity';
 import { Badge } from 'src/entities/badge.entity';
 import { Board } from 'src/entities/board.entity';
 import { File } from 'src/entities/file.entity';
+import { History } from 'src/entities/history.entity';
 import { Meetup } from 'src/entities/meetup.entity';
 import { Post } from 'src/entities/post.entity';
 import { Team } from 'src/entities/team.entity';
@@ -29,4 +31,6 @@ export default [
   User,
   Vote,
   Whitelist,
+  History,
+  About,
 ];
