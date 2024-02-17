@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ApplyQuestion } from 'src/entities/apply-question.entity';
 import { ApplySetting } from 'src/entities/apply-setting.entity';
@@ -42,19 +42,14 @@ export class ApplyService {
     };
   }
 
-  async findAllApplySetting(): Promise<GetApplySettingResponseDto> {
-    const applySettings: Array<ApplySetting> =
+  async findApplySetting(): Promise<GetApplySettingResponseDto> {
+    const applySettings: ApplySetting[] =
       await this.applySettingRepository.find();
 
-    return applySettings.map((applySetting) => ({
-      id: applySetting.id,
-      generation: applySetting.generation,
-      openAt: applySetting.openAt,
-      closeAt: applySetting.closeAt,
-      content: applySetting.content,
-      createdAt: applySetting.createdAt,
-      updatedAt: applySetting.updatedAt,
-    }));
+    if (applySettings.length === 0) {
+      throw new HttpException('Not Found', 404);
+    }
+    return applySettings[0];
   }
 
   async updateApplySetting(

@@ -7,4 +7,4 @@ class ApplySettingDto extends BaseDto {
   content: string;
 }
 
-export class GetApplySettingResponseDto extends Array<ApplySettingDto> {}
+export class GetApplySettingResponseDto extends ApplySettingDto {}
