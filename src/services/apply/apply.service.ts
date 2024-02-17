@@ -8,11 +8,13 @@ import { Repository } from 'typeorm';
 
 import { GetApplyQuestionResponseDto } from './dto/get-apply-question.dto';
 import { GetApplySettingResponseDto } from './dto/get-apply-setting.dto';
+import { GetApplyResponseDto } from './dto/get-apply.dto';
 import { PostApplyQuestionResponseDto } from './dto/post-apply-question.dto';
 import {
   PostApplySettingRequestDto,
   PostApplySettingResponseDto,
 } from './dto/post-apply-setting.dto';
+import { PostApplyRequestDto } from './dto/post-apply.dto';
 
 @Injectable()
 export class ApplyService {
@@ -106,5 +108,36 @@ export class ApplyService {
 
   async deleteApplyQuestion(id: string): Promise<void> {
     await this.applyQuestionRepository.delete({ id: id });
+  }
+
+  async createApply(apply: PostApplyRequestDto): Promise<void> {
+    await this.applyRepository.save({
+      name: apply.name,
+      studentId: apply.studentId,
+      phoneNumber: apply.phoneNumber,
+      email: apply.email,
+      applyValues: apply.applyValues.map((applyValue) => ({
+        applyQuestion: { id: applyValue.applyQuestion },
+        value: applyValue.value,
+      })),
+    });
+  }
+
+  async findAllApply(): Promise<GetApplyResponseDto> {
+    const applies: Apply[] = await this.applyRepository.find({
+      relations: ['applyValues', 'applyValues.applyQuestion'],
+    });
+
+    return applies.map((apply) => ({
+      id: apply.id,
+      name: apply.name,
+      studentId: apply.studentId,
+      phoneNumber: apply.phoneNumber,
+      email: apply.email,
+      applyValues: apply.applyValues.map((applyValue) => ({
+        applyQuestion: applyValue.applyQuestion.question,
+        value: applyValue.value,
+      })),
+    }));
   }
 }
