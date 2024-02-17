@@ -80,14 +80,16 @@ export class ApplyService {
   }
 
   async findAllApplyQuestion(): Promise<GetApplyQuestionResponseDto> {
-    const applyQuestions: Array<ApplyQuestion> =
+    const applyQuestions: ApplyQuestion[] =
       await this.applyQuestionRepository.find();
 
-    return applyQuestions.map((applyQuestion) => ({
-      id: applyQuestion.id,
-      question: applyQuestion.question,
-      description: applyQuestion.description,
-    }));
+    return {
+      applyQuestions: applyQuestions.map((applyQuestion) => ({
+        id: applyQuestion.id,
+        question: applyQuestion.question,
+        description: applyQuestion.description,
+      })),
+    };
   }
 
   async updateApplyQuestion(
@@ -116,10 +118,12 @@ export class ApplyService {
       studentId: apply.studentId,
       phoneNumber: apply.phoneNumber,
       email: apply.email,
-      applyValues: apply.applyValues.map((applyValue) => ({
-        applyQuestion: { id: applyValue.applyQuestion },
-        value: applyValue.value,
-      })),
+      applyValues: apply.applyValues.map((applyValue) => {
+        return {
+          applyQuestionId: applyValue.applyQuestion,
+          value: applyValue.value,
+        };
+      }),
     });
   }
 
@@ -128,16 +132,20 @@ export class ApplyService {
       relations: ['applyValues', 'applyValues.applyQuestion'],
     });
 
-    return applies.map((apply) => ({
-      id: apply.id,
-      name: apply.name,
-      studentId: apply.studentId,
-      phoneNumber: apply.phoneNumber,
-      email: apply.email,
-      applyValues: apply.applyValues.map((applyValue) => ({
-        applyQuestion: applyValue.applyQuestion.question,
-        value: applyValue.value,
+    return {
+      applies: applies.map((apply) => ({
+        id: apply.id,
+        name: apply.name,
+        studentId: apply.studentId,
+        phoneNumber: apply.phoneNumber,
+        email: apply.email,
+        applyValues: apply.applyValues.map((applyValue) => ({
+          applyQuestion: applyValue.applyQuestion.question,
+          value: applyValue.value,
+        })),
+        createdAt: apply.createdAt,
+        updatedAt: apply.updatedAt,
       })),
-    }));
+    };
   }
 }

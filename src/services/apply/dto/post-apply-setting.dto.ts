@@ -1,10 +1,13 @@
-export class PostApplySettingRequestDto {
-  generation: number;
-  openAt: Date;
-  closeAt: Date;
-  content: string;
-}
+import { PickType } from '@nestjs/swagger';
+import { ApplySetting } from 'src/entities/apply-setting.entity';
 
-export class PostApplySettingResponseDto {
-  id: string;
-}
+export class PostApplySettingRequestDto extends PickType(ApplySetting, [
+  'generation',
+  'openAt',
+  'closeAt',
+  'content',
+]) {}
+
+export class PostApplySettingResponseDto extends PickType(ApplySetting, [
+  'id',
+]) {}

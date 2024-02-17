@@ -1,10 +1,11 @@
-import { BaseDto } from 'src/common/dto/base.dto';
+import { PickType } from '@nestjs/swagger';
+import { ApplySetting } from 'src/entities/apply-setting.entity';
+import { baseDtoKey } from 'src/entities/base.entity';
 
-class ApplySettingDto extends BaseDto {
-  generation: number;
-  openAt: Date;
-  closeAt: Date;
-  content: string;
-}
-
-export class GetApplySettingResponseDto extends ApplySettingDto {}
+export class GetApplySettingResponseDto extends PickType(ApplySetting, [
+  ...baseDtoKey,
+  'generation',
+  'openAt',
+  'closeAt',
+  'content',
+]) {}

@@ -1,7 +1,10 @@
-export class PostApplyRequestDto {
-  name: string;
-  studentId: string;
-  phoneNumber: string;
-  email: string;
-  applyValues: { applyQuestion: string; value: string }[];
-}
+import { PickType } from '@nestjs/swagger';
+import { Apply } from 'src/entities/apply.entity';
+
+export class PostApplyRequestDto extends PickType(Apply, [
+  'name',
+  'studentId',
+  'phoneNumber',
+  'email',
+  'applyValues',
+]) {}
