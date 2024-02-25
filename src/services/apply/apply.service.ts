@@ -113,18 +113,23 @@ export class ApplyService {
   }
 
   async createApply(apply: PostApplyRequestDto): Promise<void> {
-    await this.applyRepository.save({
+    const createdApply = await this.applyRepository.save({
       name: apply.name,
       studentId: apply.studentId,
       phoneNumber: apply.phoneNumber,
       email: apply.email,
-      applyValues: apply.applyValues.map((applyValue) => {
-        return {
-          applyQuestionId: applyValue.applyQuestion,
-          value: applyValue.value,
-        };
-      }),
+      applyValues: [],
     });
+
+    await Promise.all(
+      apply.applyValues.map(async (applyValue) => {
+        await this.applyValueRepository.save({
+          value: applyValue.value,
+          apply: createdApply,
+          applyQuestion: applyValue.applyQuestion,
+        });
+      }),
+    );
   }
 
   async findAllApply(): Promise<GetApplyResponseDto> {
@@ -140,12 +145,17 @@ export class ApplyService {
         phoneNumber: apply.phoneNumber,
         email: apply.email,
         applyValues: apply.applyValues.map((applyValue) => ({
-          applyQuestion: applyValue.applyQuestion.question,
+          applyQuestion: applyValue.applyQuestion.id,
           value: applyValue.value,
         })),
         createdAt: apply.createdAt,
         updatedAt: apply.updatedAt,
       })),
     };
+  }
+
+  async deleteAllApply(): Promise<void> {
+    await this.applyValueRepository.delete({});
+    await this.applyRepository.delete({});
   }
 }

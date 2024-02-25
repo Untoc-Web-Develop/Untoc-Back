@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
   Patch,
   Post,
   Query,
@@ -49,6 +48,18 @@ export class ApplyController {
   })
   async createApply(@Body() request: PostApplyRequestDto): Promise<void> {
     await this.applyService.createApply(request);
+  }
+
+  @Delete('/')
+  @ApiOperation({
+    summary: 'Delete Apply',
+    description: 'Delete Apply',
+  })
+  @ApiCreatedResponse({
+    description: 'Apply deleted',
+  })
+  async deleteApply(): Promise<void> {
+    await this.applyService.deleteAllApply();
   }
 
   @Get('/apply-setting')
