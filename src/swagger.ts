@@ -8,6 +8,8 @@ export const setupSwagger = (app: INestApplication): void => {
     .setVersion('1.0.0')
     .build();
 
-  const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('docs', app, document);
+  const document = SwaggerModule.createDocument(app, options, {
+    ignoreGlobalPrefix: false,
+  });
+  SwaggerModule.setup('api/docs', app, document);
 };
