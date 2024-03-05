@@ -1,8 +1,8 @@
 import { BaseEntity } from 'src/entities/base.entity';
-import { User } from 'src/entities/user.entity';
 import { File } from 'src/entities/file.entity';
-import { Vote } from 'src/entities/vote.entity';
 import { Meetup } from 'src/entities/meetup.entity';
+import { User } from 'src/entities/user.entity';
+import { Vote } from 'src/entities/vote.entity';
 import {
   Column,
   Entity,

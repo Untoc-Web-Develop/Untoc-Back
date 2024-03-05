@@ -17,6 +17,7 @@ import { ApplyValue } from './apply-value.entity';
 import { Apply } from './apply.entity';
 
 export default [
+  About,
   Apply,
   ApplyQuestion,
   ApplySetting,
@@ -32,5 +33,4 @@ export default [
   Vote,
   Whitelist,
   History,
-  About,
 ];

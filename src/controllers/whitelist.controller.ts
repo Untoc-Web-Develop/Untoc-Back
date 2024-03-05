@@ -14,7 +14,7 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { LoginAuthGuard } from 'src/auth/guard/login.guard';
+import { LoginAuthGuard } from 'src/services/auth/guard/login.guard';
 import { UserService } from 'src/services/user/user.service';
 import { GetWhiteListResponseDto } from 'src/services/whitelist/dto/get-whitelist.dto';
 import {

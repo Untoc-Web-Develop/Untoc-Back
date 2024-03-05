@@ -1,7 +1,7 @@
 import { BaseEntity } from 'src/entities/base.entity';
-import { User } from 'src/entities/user.entity';
 import { Meetup } from 'src/entities/meetup.entity';
 import { Team } from 'src/entities/team.entity';
+import { User } from 'src/entities/user.entity';
 import { Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity({ name: 'vote' })

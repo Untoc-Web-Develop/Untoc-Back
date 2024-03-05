@@ -1,8 +1,8 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { AuthService } from 'src/auth/auth.service';
 import ERROR from 'src/common/error';
+import { AuthService } from 'src/services/auth/auth.service';
 
 @Injectable()
 export class LoginAuthGuard implements CanActivate {
@@ -15,6 +15,11 @@ export class LoginAuthGuard implements CanActivate {
     try {
       const request = context.switchToHttp().getRequest();
       const access_token = request.cookies['accessToken'];
+
+      if (!access_token) {
+        throw ERROR.NEED_LOGIN;
+      }
+
       let payload = await this.jwtService.verify(access_token, {
         secret: this.configService.get('JWT_ACCESS_SECRET'),
       });
@@ -43,8 +48,12 @@ export class LoginAuthGuard implements CanActivate {
       request.user = payload;
       return true;
     } catch (err) {
-      console.log(err);
-      throw ERROR.UNKNOWN;
+      if (err.name === 'HttpException') {
+        throw err;
+      } else {
+        console.log(err);
+        throw ERROR.UNKNOWN;
+      }
     }
   }
 }

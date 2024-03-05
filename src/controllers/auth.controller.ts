@@ -15,11 +15,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Request, Response } from 'express';
-import { AuthService } from 'src/auth/auth.service';
-import { LoginRequestDto } from 'src/auth/dto/login.dto';
-import { RegisterRequestDto } from 'src/auth/dto/register.dto';
-import { LoginAuthGuard } from 'src/auth/guard/login.guard';
-import { AccessPayload } from 'src/auth/payload/access.payload';
+import { AuthService } from 'src/services/auth/auth.service';
+import { LoginRequestDto } from 'src/services/auth/dto/login.dto';
+import { RegisterRequestDto } from 'src/services/auth/dto/register.dto';
+import { LoginAuthGuard } from 'src/services/auth/guard/login.guard';
+import { AccessPayload } from 'src/services/auth/payload/access.payload';
 
 @Controller('')
 @ApiTags('Auth')

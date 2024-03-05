@@ -1,8 +1,8 @@
 import { BaseEntity } from 'src/entities/base.entity';
-import { File } from 'src/entities/file.entity';
 import { Board } from 'src/entities/board.entity';
-import { Column, Entity, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
+import { File } from 'src/entities/file.entity';
 import { User } from 'src/entities/user.entity';
+import { Column, Entity, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity({ name: 'post' })
 export class Post extends BaseEntity {

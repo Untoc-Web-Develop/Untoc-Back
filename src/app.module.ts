@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from 'src/auth/auth.module';
+import controllers from 'src/controllers';
 import entities from 'src/entities';
-import modules from 'src/modules';
+import services from 'src/services';
 
 @Module({
   imports: [
@@ -20,8 +20,9 @@ import modules from 'src/modules';
       entities: entities,
       synchronize: process?.env?.MODE === 'DEV' ? true : false,
     }),
-    AuthModule,
-    ...modules,
+    TypeOrmModule.forFeature(entities),
   ],
+  controllers: controllers,
+  providers: services,
 })
 export class AppModule {}
