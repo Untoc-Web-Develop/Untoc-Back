@@ -60,6 +60,7 @@ export class AuthController {
     return {
       userId: user.id,
       username: user.username,
+      badgeKeys: user.badges.map((badge) => badge._key),
     };
   }
 
