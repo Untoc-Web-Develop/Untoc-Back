@@ -81,7 +81,7 @@ export class ApplyService {
 
   async findAllApplyQuestion(): Promise<GetApplyQuestionResponseDto> {
     const applyQuestions: ApplyQuestion[] =
-      await this.applyQuestionRepository.find();
+      await this.applyQuestionRepository.find({ order: { createdAt: 'ASC' } });
 
     return {
       applyQuestions: applyQuestions.map((applyQuestion) => ({
