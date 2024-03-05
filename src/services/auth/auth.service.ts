@@ -3,12 +3,12 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import { RegisterRequestDto } from 'src/auth/dto/register.dto';
-import { AccessPayload } from 'src/auth/payload/access.payload';
-import { RefreshPayload } from 'src/auth/payload/refresh.payload';
 import ERROR from 'src/common/error';
 import { User } from 'src/entities/user.entity';
 import { Whitelist } from 'src/entities/whitelist.entity';
+import { RegisterRequestDto } from 'src/services/auth/dto/register.dto';
+import { AccessPayload } from 'src/services/auth/payload/access.payload';
+import { RefreshPayload } from 'src/services/auth/payload/refresh.payload';
 import { Repository } from 'typeorm';
 
 @Injectable()
