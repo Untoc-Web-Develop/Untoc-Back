@@ -11,7 +11,7 @@ const ERROR = {
   NOT_FOUND: new HttpException('찾을 수 없습니다.', 404),
   ALREADY_EXISTS: new HttpException('이미 존재하는 정보 입니다.', 409),
   NOT_WHITELISTED: new HttpException('화이트리스트에 없는 정보입니다.', 409),
-  UNKOWN: new HttpException('알 수 없는 오류입니다.', 500),
+  UNKNOWN: new HttpException('알 수 없는 오류입니다.', 500),
 };
 
 export default ERROR;
