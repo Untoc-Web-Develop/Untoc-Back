@@ -26,6 +26,9 @@ export class AuthService {
 
   async validateUser(email: string, password: string): Promise<User> {
     const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) {
+      throw ERROR.INVALID_CREDENTIALS;
+    }
     const encryptedPassword = user?.password;
     if (!(await bcrypt.compare(password, encryptedPassword))) {
       throw ERROR.INVALID_CREDENTIALS;
