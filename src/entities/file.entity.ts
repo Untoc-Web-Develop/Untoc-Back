@@ -10,7 +10,6 @@ export class File extends BaseEntity {
   link: string;
 
   @OneToOne(() => Badge, (badge) => badge.icon)
-  @JoinColumn({ name: 'badge_id' })
   badge: Badge;
 
   @ManyToOne(() => Post, (post) => post.files, { nullable: true })
