@@ -14,7 +14,7 @@ import {
 
 @Entity({ name: 'badge' })
 export class Badge extends BaseEntity {
-  @Column({ name: '_key' })
+  @Column({ name: '_key', unique: true })
   _key: string;
 
   @Column({ name: 'title' })
