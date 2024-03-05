@@ -44,7 +44,7 @@ export class LoginAuthGuard implements CanActivate {
       return true;
     } catch (err) {
       console.log(err);
-      throw ERROR.UNKOWN;
+      throw ERROR.UNKNOWN;
     }
   }
 }
