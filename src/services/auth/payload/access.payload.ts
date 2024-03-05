@@ -8,4 +8,10 @@ export class AccessPayload {
     description: '사용자 이름',
   })
   username: string;
+
+  @ApiProperty({
+    description: '사용자 뱃지 키 종류',
+    type: [String],
+  })
+  badgeKeys: Array<string>;
 }

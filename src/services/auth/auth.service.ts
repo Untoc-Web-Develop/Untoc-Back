@@ -25,7 +25,10 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, password: string): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { email } });
+    const user = await this.userRepository.findOne({
+      where: { email },
+      relations: ['badges'],
+    });
     if (!user) {
       throw ERROR.INVALID_CREDENTIALS;
     }
@@ -76,7 +79,11 @@ export class AuthService {
   }
 
   async generateAccessToken(user: User): Promise<string> {
-    const payload: AccessPayload = { userId: user.id, username: user.username };
+    const payload: AccessPayload = {
+      userId: user.id,
+      username: user.username,
+      badgeKeys: user.badges.map((badge) => badge._key),
+    };
     return this.jwtService.sign(payload, {
       expiresIn: this.configService.get('JWT_ACCESS_EXPIRATION'),
       secret: this.configService.get('JWT_ACCESS_SECRET'),
