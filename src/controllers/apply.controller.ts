@@ -6,6 +6,8 @@ import {
   Patch,
   Post,
   Query,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GetApplyQuestionResponseDto } from 'src/services/apply/dto/get-apply-question.dto';
@@ -17,15 +19,21 @@ import {
   PostApplySettingResponseDto,
 } from 'src/services/apply/dto/post-apply-setting.dto';
 import { PostApplyRequestDto } from 'src/services/apply/dto/post-apply.dto';
+import { LoginAuthGuard } from 'src/services/auth/guard/login.guard';
+import { UserService } from 'src/services/user/user.service';
 
 import { ApplyService } from './../services/apply/apply.service';
 
 @Controller('apply')
 @ApiTags('Apply')
 export class ApplyController {
-  constructor(private readonly applyService: ApplyService) {}
+  constructor(
+    private readonly applyService: ApplyService,
+    private readonly userService: UserService,
+  ) {}
 
   @Get('/')
+  @UseGuards(LoginAuthGuard)
   @ApiOperation({
     summary: 'Get Apply',
     description: 'Get Apply',
@@ -34,8 +42,11 @@ export class ApplyController {
     description: 'Apply list',
     type: GetApplyResponseDto,
   })
-  async findAllApply(): Promise<GetApplyResponseDto> {
-    return await this.applyService.findAllApply();
+  async findAllApply(@Request() req): Promise<GetApplyResponseDto> {
+    const userId = req.user.userId;
+    if (await this.userService.checkBadgeForAuth(userId, 'admin')) {
+      return await this.applyService.findAllApply();
+    }
   }
 
   @Post('/')
@@ -46,11 +57,12 @@ export class ApplyController {
   @ApiCreatedResponse({
     description: 'Apply created',
   })
-  async createApply(@Body() request: PostApplyRequestDto): Promise<void> {
-    await this.applyService.createApply(request);
+  async createApply(@Body() body: PostApplyRequestDto): Promise<void> {
+    await this.applyService.createApply(body);
   }
 
   @Delete('/')
+  @UseGuards(LoginAuthGuard)
   @ApiOperation({
     summary: 'Delete Apply',
     description: 'Delete Apply',
@@ -58,8 +70,11 @@ export class ApplyController {
   @ApiCreatedResponse({
     description: 'Apply deleted',
   })
-  async deleteApply(): Promise<void> {
-    await this.applyService.deleteAllApply();
+  async deleteApply(@Request() req): Promise<void> {
+    const userId = req.user.userId;
+    if (await this.userService.checkBadgeForAuth(userId, 'admin')) {
+      await this.applyService.deleteAllApply();
+    }
   }
 
   @Get('/apply-setting')
@@ -76,6 +91,7 @@ export class ApplyController {
   }
 
   @Post('/apply-setting')
+  @UseGuards(LoginAuthGuard)
   @ApiOperation({
     summary: 'Create Apply Setting',
     description: 'Create Apply Setting',
@@ -85,12 +101,17 @@ export class ApplyController {
     type: PostApplySettingResponseDto,
   })
   async createApplySetting(
-    @Body() request: PostApplySettingRequestDto,
+    @Request() req,
+    @Body() body: PostApplySettingRequestDto,
   ): Promise<PostApplySettingResponseDto> {
-    return await this.applyService.creteApplySetting(request);
+    const userId = req.user.userId;
+    if (await this.userService.checkBadgeForAuth(userId, 'admin')) {
+      return await this.applyService.creteApplySetting(body);
+    }
   }
 
   @Patch('/apply-setting')
+  @UseGuards(LoginAuthGuard)
   @ApiOperation({
     summary: 'Update Apply Setting',
     description: 'Update Apply Setting',
@@ -99,19 +120,21 @@ export class ApplyController {
     description: 'Apply Setting updated',
   })
   async updateApplySetting(
+    @Request() req,
     @Body()
-    request: {
+    body: {
       id: string;
       newApplySetting: PostApplySettingRequestDto;
     },
   ): Promise<void> {
-    await this.applyService.updateApplySetting(
-      request.id,
-      request.newApplySetting,
-    );
+    const userId = req.user.userId;
+    if (await this.userService.checkBadgeForAuth(userId, 'admin')) {
+      await this.applyService.updateApplySetting(body.id, body.newApplySetting);
+    }
   }
 
   @Delete('/apply-setting')
+  @UseGuards(LoginAuthGuard)
   @ApiOperation({
     summary: 'Delete Apply Setting',
     description: 'Delete Apply Setting',
@@ -119,8 +142,14 @@ export class ApplyController {
   @ApiCreatedResponse({
     description: 'Apply Setting deleted',
   })
-  async deleteApplySetting(@Query('id') id: string): Promise<void> {
-    await this.applyService.deleteApplySetting(id);
+  async deleteApplySetting(
+    @Request() req,
+    @Query('id') id: string,
+  ): Promise<void> {
+    const userId = req.user.userId;
+    if (await this.userService.checkBadgeForAuth(userId, 'admin')) {
+      await this.applyService.deleteApplySetting(id);
+    }
   }
 
   @Get('/apply-question')
@@ -137,6 +166,7 @@ export class ApplyController {
   }
 
   @Post('/apply-question')
+  @UseGuards(LoginAuthGuard)
   @ApiOperation({
     summary: 'Create Apply Question',
     description: 'Create Apply Question',
@@ -146,12 +176,17 @@ export class ApplyController {
     type: PostApplyQuestionResponseDto,
   })
   async createApplyQuestion(
-    @Body() request: { question: string; description: string },
+    @Request() req,
+    @Body() body: { question: string; description: string },
   ): Promise<PostApplyQuestionResponseDto> {
-    return await this.applyService.createApplyQuestion(request);
+    const userId = req.user.userId;
+    if (await this.userService.checkBadgeForAuth(userId, 'admin')) {
+      return await this.applyService.createApplyQuestion(body);
+    }
   }
 
   @Patch('/apply-question')
+  @UseGuards(LoginAuthGuard)
   @ApiOperation({
     summary: 'Update Apply Question',
     description: 'Update Apply Question',
@@ -160,8 +195,9 @@ export class ApplyController {
     description: 'Apply Question updated',
   })
   async updateApplyQuestion(
+    @Request() req,
     @Body()
-    request: {
+    body: {
       id: string;
       newApplyQuestion: {
         question: string;
@@ -169,13 +205,17 @@ export class ApplyController {
       };
     },
   ): Promise<void> {
-    await this.applyService.updateApplyQuestion(
-      request.id,
-      request.newApplyQuestion,
-    );
+    const userId = req.user.userId;
+    if (await this.userService.checkBadgeForAuth(userId, 'admin')) {
+      await this.applyService.updateApplyQuestion(
+        body.id,
+        body.newApplyQuestion,
+      );
+    }
   }
 
   @Delete('/apply-question')
+  @UseGuards(LoginAuthGuard)
   @ApiOperation({
     summary: 'Delete Apply Question',
     description: 'Delete Apply Question',
@@ -183,7 +223,13 @@ export class ApplyController {
   @ApiCreatedResponse({
     description: 'Apply Question deleted',
   })
-  async deleteApplyQuestion(@Query('id') id: string): Promise<void> {
-    await this.applyService.deleteApplyQuestion(id);
+  async deleteApplyQuestion(
+    @Request() req,
+    @Query('id') id: string,
+  ): Promise<void> {
+    const userId = req.user.userId;
+    if (await this.userService.checkBadgeForAuth(userId, 'admin')) {
+      await this.applyService.deleteApplyQuestion(id);
+    }
   }
 }
