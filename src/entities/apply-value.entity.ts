@@ -6,7 +6,7 @@ import { BaseEntity } from './base.entity';
 
 @Entity({ name: 'apply_value' })
 export class ApplyValue extends BaseEntity {
-  @Column({ name: 'value' })
+  @Column({ name: 'value', type: 'longtext' })
   value: string;
 
   @ManyToOne(() => Apply, (apply) => apply.applyValues)

@@ -8,7 +8,7 @@ export class ApplyQuestion extends BaseEntity {
   @Column({ name: 'question' })
   question: string;
 
-  @Column({ name: 'description' })
+  @Column({ name: 'description', type: 'longtext' })
   description: string;
 
   @OneToMany(() => ApplyValue, (applyValue) => applyValue.applyQuestion)
