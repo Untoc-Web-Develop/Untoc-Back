@@ -12,19 +12,27 @@ export class LoginAuthGuard implements CanActivate {
     private readonly jwtService: JwtService,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest();
     try {
-      const request = context.switchToHttp().getRequest();
       const access_token = request.cookies['accessToken'];
 
       if (!access_token) {
         throw ERROR.NEED_LOGIN;
       }
 
-      let payload = await this.jwtService.verify(access_token, {
+      const payload = await this.jwtService.verify(access_token, {
         secret: this.configService.get('JWT_ACCESS_SECRET'),
       });
 
-      if (!payload) {
+      request.user = payload;
+      return true;
+    } catch (err) {
+      if (err.name === 'HttpException') {
+        throw err;
+      } else if (err.name === 'JsonWebTokenError') {
+        if (err.message === 'invalid token') {
+          throw ERROR.INVALID_TOKEN;
+        }
         const refreshPayload = await this.authService.validateRefreshToken(
           request.cookies['refreshToken'],
         );
@@ -43,13 +51,11 @@ export class LoginAuthGuard implements CanActivate {
           sameSite: 'none',
         });
 
-        payload = await this.jwtService.verify(accessToken);
-      }
-      request.user = payload;
-      return true;
-    } catch (err) {
-      if (err.name === 'HttpException') {
-        throw err;
+        const payload = await this.jwtService.verify(accessToken, {
+          secret: this.configService.get('JWT_ACCESS_SECRET'),
+        });
+        request.user = payload;
+        return true;
       } else {
         console.log(err);
         throw ERROR.UNKNOWN;
