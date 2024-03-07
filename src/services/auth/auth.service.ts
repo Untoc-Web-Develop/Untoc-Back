@@ -91,7 +91,10 @@ export class AuthService {
   }
 
   async refreshAccessToken(userId: string): Promise<string> {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['badges'],
+    });
     return await this.generateAccessToken(user);
   }
 
@@ -115,21 +118,33 @@ export class AuthService {
   }
 
   async validateRefreshToken(refreshToken: string): Promise<RefreshPayload> {
-    const payload = this.jwtService.verify(refreshToken, {
-      secret: this.configService.get('JWT_REFRESH_SECRET'),
-    }) as RefreshPayload;
+    try {
+      const payload = this.jwtService.verify(refreshToken, {
+        secret: this.configService.get('JWT_REFRESH_SECRET'),
+      }) as RefreshPayload;
 
-    const user = await this.userRepository.findOne({
-      where: { id: payload.userId },
-    });
+      const user = await this.userRepository.findOne({
+        where: { id: payload.userId },
+      });
 
-    const encryptedRefreshToken = user?.refreshToken;
+      const encryptedRefreshToken = user?.refreshToken;
 
-    if (!(await bcrypt.compare(refreshToken, encryptedRefreshToken))) {
-      throw ERROR.INVALID_TOKEN;
+      if (!(await bcrypt.compare(refreshToken, encryptedRefreshToken))) {
+        throw ERROR.INVALID_TOKEN;
+      }
+
+      return payload;
+    } catch (err) {
+      if (err.name === 'JsonWebTokenError') {
+        if (err.message === 'jwt expired') {
+          throw ERROR.EXPIRED_TOKEN;
+        }
+        throw ERROR.INVALID_TOKEN;
+      } else {
+        console.log(err);
+        throw ERROR.UNKNOWN;
+      }
     }
-
-    return payload;
   }
 
   async clearRefreshToken(userId: string): Promise<void> {
