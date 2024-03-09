@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import ERROR from 'src/common/error';
+import { Email } from 'src/entities/email.entity';
 import { User } from 'src/entities/user.entity';
 import { Whitelist } from 'src/entities/whitelist.entity';
 import { RegisterRequestDto } from 'src/services/auth/dto/register.dto';
@@ -19,6 +20,9 @@ export class AuthService {
 
     @InjectRepository(Whitelist)
     private readonly whitelistRepository: Repository<Whitelist>,
+
+    @InjectRepository(Email)
+    private readonly emailRepository: Repository<Email>,
 
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
@@ -62,6 +66,18 @@ export class AuthService {
 
     if (whitelist.length === 0) {
       throw ERROR.NOT_WHITELISTED;
+    }
+
+    const email = await this.emailRepository.findOne({
+      where: { email: request.email },
+    });
+
+    if (!email) {
+      throw ERROR.NOT_FOUND;
+    }
+
+    if (email?.isVerified === false) {
+      throw ERROR.UNAUTHORIZED;
     }
 
     const encryptedPassword = await bcrypt.hash(

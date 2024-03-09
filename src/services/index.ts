@@ -3,9 +3,9 @@ import { JwtService } from '@nestjs/jwt';
 import { AboutService } from 'src/services/about/about.service';
 import { ApplyService } from 'src/services/apply/apply.service';
 import { AuthService } from 'src/services/auth/auth.service';
+import { EmailService } from 'src/services/email/email.service';
 import { UserService } from 'src/services/user/user.service';
 import { WhitelistService } from 'src/services/whitelist/whitelist.service';
-
 export default [
   AboutService,
   ApplyService,
@@ -14,4 +14,5 @@ export default [
   ConfigService,
   JwtService,
   AuthService,
+  EmailService,
 ];

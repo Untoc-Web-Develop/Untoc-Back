@@ -15,6 +15,7 @@ import { ApplyQuestion } from './apply-question.entity';
 import { ApplySetting } from './apply-setting.entity';
 import { ApplyValue } from './apply-value.entity';
 import { Apply } from './apply.entity';
+import { Email } from './email.entity';
 
 export default [
   About,
@@ -33,4 +34,5 @@ export default [
   Vote,
   Whitelist,
   History,
+  Email,
 ];
