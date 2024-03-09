@@ -33,6 +33,15 @@ export class EmailService {
     }
   }
 
+  async sendPasswordResetEmail(email: string, password: string): Promise<void> {
+    await this.mailerService.sendMail({
+      from: process.env.EMAIL_ADDRESS,
+      to: email,
+      subject: 'UNTOC 비밀번호 재설정 이메일입니다.',
+      text: `새로운 비밀번호: ${password}`,
+    });
+  }
+
   private generateVerificationCode(): string {
     const buffer = randomBytes(3);
     return buffer.toString('hex').toUpperCase().slice(0, 6);

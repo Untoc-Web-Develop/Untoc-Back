@@ -17,6 +17,7 @@ import {
 import { Request, Response } from 'express';
 import { AuthService } from 'src/services/auth/auth.service';
 import { LoginRequestDto } from 'src/services/auth/dto/login.dto';
+import { ForgetPasswordRequestDto } from 'src/services/auth/dto/post-forget.dto';
 import { RegisterRequestDto } from 'src/services/auth/dto/register.dto';
 import { LoginAuthGuard } from 'src/services/auth/guard/login.guard';
 import { AccessPayload } from 'src/services/auth/payload/access.payload';
@@ -100,6 +101,19 @@ export class AuthController {
     };
   }
 
+  @Post('/forgot-password')
+  @ApiOperation({ summary: '비밀번호 재설정' })
+  @ApiBody({
+    type: ForgetPasswordRequestDto,
+    description: '이메일로 비밀번호 재설정',
+  })
+  async forgetPassword(
+    @Body() forgetPasswordRequestDto: ForgetPasswordRequestDto,
+  ) {
+    return await this.authService.forgetPasswordChange(
+      forgetPasswordRequestDto.email,
+    );
+  }
   @Get('/login-check')
   @ApiOperation({ summary: '로그인 체크' })
   @UseGuards(LoginAuthGuard)

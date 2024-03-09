@@ -1,3 +1,5 @@
+import { randomBytes } from 'crypto';
+
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -11,6 +13,8 @@ import { RegisterRequestDto } from 'src/services/auth/dto/register.dto';
 import { AccessPayload } from 'src/services/auth/payload/access.payload';
 import { RefreshPayload } from 'src/services/auth/payload/refresh.payload';
 import { Repository } from 'typeorm';
+
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class AuthService {
@@ -26,6 +30,7 @@ export class AuthService {
 
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
+    private readonly emailService: EmailService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<User> {
@@ -94,6 +99,23 @@ export class AuthService {
     return newUser;
   }
 
+  async forgetPasswordChange(email: string): Promise<string> {
+    const user = await this.userRepository.findOne({
+      where: { email },
+    });
+    if (!user) {
+      throw ERROR.NOT_FOUND;
+    } else {
+      const generatedPassword = this.generatePassword();
+      this.emailService.sendPasswordResetEmail(email, generatedPassword);
+      user.password = await bcrypt.hash(
+        generatedPassword,
+        parseInt(this.configService.get('HASH_NUMBER')),
+      );
+      await this.userRepository.save(user);
+      return user.id;
+    }
+  }
   async generateAccessToken(user: User): Promise<string> {
     const payload: AccessPayload = {
       userId: user.id,
@@ -165,5 +187,10 @@ export class AuthService {
 
   async clearRefreshToken(userId: string): Promise<void> {
     await this.userRepository.update({ id: userId }, { refreshToken: null });
+  }
+
+  private generatePassword(): string {
+    const buffer = randomBytes(7);
+    return buffer.toString('hex').toUpperCase().slice(0, 14);
   }
 }
