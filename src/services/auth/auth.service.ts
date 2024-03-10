@@ -116,6 +116,22 @@ export class AuthService {
       return user.id;
     }
   }
+
+  async passwordChange(email: string, newPassword: string): Promise<void> {
+    const user = await this.userRepository.findOne({
+      where: { email },
+    });
+    if (!user) {
+      throw ERROR.NOT_FOUND;
+    } else {
+      user.password = await bcrypt.hash(
+        newPassword,
+        parseInt(this.configService.get('HASH_NUMBER')),
+      );
+      await this.userRepository.save(user);
+    }
+  }
+
   async generateAccessToken(user: User): Promise<string> {
     const payload: AccessPayload = {
       userId: user.id,
