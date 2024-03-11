@@ -135,6 +135,7 @@ export class ApplyService {
   async findAllApply(): Promise<GetApplyResponseDto> {
     const applies: Apply[] = await this.applyRepository.find({
       relations: ['applyValues', 'applyValues.applyQuestion'],
+      order: { applyValues: { applyQuestion: { createdAt: 'ASC' } } },
     });
 
     return {
