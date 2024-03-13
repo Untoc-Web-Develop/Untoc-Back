@@ -3,9 +3,12 @@ import { ApplyController } from 'src/controllers/apply.controller';
 import { AuthController } from 'src/controllers/auth.controller';
 import { WhitelistController } from 'src/controllers/whitelist.controller';
 
+import { TeamController } from './team.controller';
+
 export default [
   AuthController,
   AboutController,
   ApplyController,
   WhitelistController,
+  TeamController,
 ];
