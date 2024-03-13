@@ -9,14 +9,17 @@ export class Post extends BaseEntity {
   @Column({ name: 'title' })
   title: string;
 
-  @ManyToOne(() => User, (user) => user.posts)
+  @Column({ name: 'content', type: 'longtext' })
+  content: string;
+
+  @ManyToOne(() => User, (user) => user.posts, { nullable: false })
   @JoinColumn({ name: 'author_id' })
   author: User;
 
-  @OneToMany(() => File, (file) => file.post)
+  @OneToMany(() => File, (file) => file.post, { nullable: true })
   files: File[];
 
-  @ManyToOne(() => Board, (board) => board.posts)
+  @ManyToOne(() => Board, (board) => board.posts, { nullable: false })
   @JoinColumn({ name: 'board_id' })
   board: Board;
 }
