@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Request,
   UseGuards,
@@ -9,6 +10,7 @@ import {
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { LoginAuthGuard } from 'src/services/auth/guard/login.guard';
 import { GetTeamListResponseDto } from 'src/services/team/dto/get-team-list.dto';
+import { GetTeamResponseDto } from 'src/services/team/dto/get-team.dto';
 import {
   PostTeamRequestDto,
   PostTeamResponseDto,
@@ -50,5 +52,19 @@ export class TeamController {
   ): Promise<PostTeamResponseDto> {
     const userId = req.user.userId;
     return await this.teamService.createTeam(userId, body);
+  }
+
+  @Get('/:id')
+  @UseGuards(LoginAuthGuard)
+  @ApiOperation({
+    summary: '팀 조회',
+    description: '특정 팀을 조회합니다.',
+  })
+  @ApiCreatedResponse({
+    description: '팀 정보',
+    type: GetTeamResponseDto,
+  })
+  async findTeamById(@Param('id') id: string): Promise<GetTeamResponseDto> {
+    return await this.teamService.findTeamById(id);
   }
 }

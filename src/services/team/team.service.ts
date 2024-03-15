@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 
 import { TeamLink } from './../../entities/team-link.entity';
 import { GetTeamListResponseDto } from './dto/get-team-list.dto';
+import { GetTeamResponseDto } from './dto/get-team.dto';
 import { PostTeamRequestDto, PostTeamResponseDto } from './dto/post-team.dto';
 
 @Injectable()
@@ -79,5 +80,26 @@ export class TeamService {
     );
 
     return { id: newTeam.id };
+  }
+
+  async findTeamById(id: string): Promise<GetTeamResponseDto> {
+    const team = await this.teamRepository.findOne({
+      relations: ['member', 'leader', 'links'],
+      where: { id: id },
+    });
+
+    return {
+      team: {
+        id: team.id,
+        name: team.name,
+        leader: team.leader.username,
+        member: team.member.map((user) => user.username),
+        descriptionTitle: team.descriptionTitle,
+        descriptionContent: team.descriptionContent,
+        links: team.links,
+        updatedAt: team.updatedAt,
+        createdAt: team.createdAt,
+      },
+    };
   }
 }
