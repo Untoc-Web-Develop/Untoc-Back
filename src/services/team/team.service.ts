@@ -58,10 +58,8 @@ export class TeamService {
       name: team.name,
       descriptionTitle: team.descriptionTitle,
       descriptionContent: team.descriptionContent,
+      leader,
     });
-
-    leader.leadTeams.push(newTeam);
-    await this.UserRepository.save(leader);
 
     member.forEach((user) => {
       user.teams.push(newTeam);
