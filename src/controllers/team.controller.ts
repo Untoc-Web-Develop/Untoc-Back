@@ -36,6 +36,14 @@ export class TeamController {
 
   @Post('/')
   @UseGuards(LoginAuthGuard)
+  @ApiOperation({
+    summary: '팀 생성',
+    description: '팀을 생성합니다.',
+  })
+  @ApiCreatedResponse({
+    description: '생성된 팀의 id',
+    type: PostTeamResponseDto,
+  })
   async createTeam(
     @Request() req,
     @Body() body: PostTeamRequestDto,
