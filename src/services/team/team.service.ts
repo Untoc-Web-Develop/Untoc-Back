@@ -42,11 +42,15 @@ export class TeamService {
     { team }: PostTeamRequestDto,
   ): Promise<PostTeamResponseDto> {
     const leader = await this.UserRepository.findOne({
+      relations: ['leadTeams'],
       where: { id: leaderId },
     });
     const member = await Promise.all(
       team.member.map((memberId) =>
-        this.UserRepository.findOne({ where: { id: memberId } }),
+        this.UserRepository.findOne({
+          relations: ['teams'],
+          where: { id: memberId },
+        }),
       ),
     );
 
@@ -54,9 +58,15 @@ export class TeamService {
       name: team.name,
       descriptionTitle: team.descriptionTitle,
       descriptionContent: team.descriptionContent,
-      leader,
-      member,
     });
+
+    leader.leadTeams.push(newTeam);
+    await this.UserRepository.save(leader);
+
+    member.forEach((user) => {
+      user.teams.push(newTeam);
+    });
+    await this.UserRepository.save(member);
 
     await Promise.all(
       team.links.map((link) => {
