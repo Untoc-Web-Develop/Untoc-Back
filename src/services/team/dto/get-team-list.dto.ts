@@ -8,8 +8,14 @@ class TeamListDto extends PickType(Team, [
   'descriptionTitle',
   'descriptionContent',
 ]) {
+  @ApiProperty({ description: '팀장' })
+  leader: string;
+
   @ApiProperty({ description: '팀원' })
   member: string[];
+
+  @ApiProperty({ description: '팀 소개 링크' })
+  links: string[];
 }
 
 export class GetTeamListResponseDto {

@@ -1,3 +1,5 @@
+import { link } from 'fs';
+
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Team } from 'src/entities/team.entity';
@@ -22,15 +24,19 @@ export class TeamService {
   ) {}
 
   async findAll(): Promise<GetTeamListResponseDto> {
-    const teams = await this.teamRepository.find();
+    const teams = await this.teamRepository.find({
+      relations: ['member', 'leader', 'links'],
+    });
 
     return {
       teams: teams.map((team) => ({
         id: team.id,
         name: team.name,
+        leader: team.leader.username,
         member: team.member.map((user) => user.username),
         descriptionTitle: team.descriptionTitle,
         descriptionContent: team.descriptionContent,
+        links: team.links.map((link) => link.link),
         updatedAt: team.updatedAt,
         createdAt: team.createdAt,
       })),
