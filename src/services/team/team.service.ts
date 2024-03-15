@@ -4,6 +4,7 @@ import { Team } from 'src/entities/team.entity';
 import { User } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
 
+import { TeamLink } from './../../entities/team-link.entity';
 import { GetTeamListResponseDto } from './dto/get-team-list.dto';
 import { PostTeamRequestDto, PostTeamResponseDto } from './dto/post-team.dto';
 
@@ -12,6 +13,9 @@ export class TeamService {
   constructor(
     @InjectRepository(Team)
     private readonly teamRepository: Repository<Team>,
+
+    @InjectRepository(TeamLink)
+    private readonly teamLinkRepository: Repository<TeamLink>,
 
     @InjectRepository(User)
     private readonly UserRepository: Repository<User>,
@@ -53,6 +57,12 @@ export class TeamService {
       leader,
       member,
     });
+
+    await Promise.all(
+      team.links.map((link) => {
+        return this.teamLinkRepository.save({ link: link, team: newTeam });
+      }),
+    );
 
     return { id: newTeam.id };
   }

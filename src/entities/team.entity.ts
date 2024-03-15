@@ -14,6 +14,8 @@ import {
   OneToMany,
 } from 'typeorm';
 
+import { TeamLink } from './team-link.entity';
+
 @Entity({ name: 'team' })
 export class Team extends BaseEntity {
   @ApiProperty({ description: '팀 이름' })
@@ -47,4 +49,7 @@ export class Team extends BaseEntity {
   @ManyToMany(() => Meetup, (meetup) => meetup.teams)
   @JoinTable({ name: 'team_meetup' })
   meetup: Meetup[];
+
+  @OneToMany(() => TeamLink, (teamLink) => teamLink.team)
+  links: TeamLink[];
 }

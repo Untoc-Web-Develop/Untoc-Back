@@ -8,6 +8,9 @@ class PostTeamDto extends PickType(Team, [
 ]) {
   @ApiProperty({ description: '팀원 id 목록' })
   member: string[];
+
+  @ApiProperty({ description: '팀 소개 링크' })
+  links: string[];
 }
 
 export class PostTeamRequestDto {
