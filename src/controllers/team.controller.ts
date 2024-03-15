@@ -54,17 +54,19 @@ export class TeamController {
     return await this.teamService.createTeam(userId, body);
   }
 
-  @Get('/:id')
+  @Get('/:teamId')
   @UseGuards(LoginAuthGuard)
   @ApiOperation({
     summary: '팀 조회',
-    description: '특정 팀을 조회합니다.',
+    description: '팀 id를 통해 팀 정보를 조회합니다.',
   })
   @ApiCreatedResponse({
     description: '팀 정보',
     type: GetTeamResponseDto,
   })
-  async findTeamById(@Param('id') id: string): Promise<GetTeamResponseDto> {
-    return await this.teamService.findTeamById(id);
+  async findTeamById(
+    @Param('teamId') teamId: string,
+  ): Promise<GetTeamResponseDto> {
+    return await this.teamService.findTeamById(teamId);
   }
 }
