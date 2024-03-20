@@ -16,7 +16,7 @@ import { PatchPostRequestDto } from 'src/services/post/dto/patch-update.dto';
 import { PostCreateRequestDto } from 'src/services/post/dto/post-create.dto';
 import { PostService } from 'src/services/post/post.service';
 
-@Controller('')
+@Controller('post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 

@@ -14,7 +14,7 @@ export class EmailController {
   @Post('/send-code')
   @ApiCreatedResponse({
     type: Email,
-    description: 'Email created with verification code',
+    description: '이메일 확인 코드 전송',
   })
   async sendVerificationCode(
     @Body() sendEmailRequestDto: SendEmailRequestDto,
@@ -24,7 +24,7 @@ export class EmailController {
 
   @Post('/verify-code')
   @ApiCreatedResponse({
-    description: 'Email verified',
+    description: '이메일 확인 코드 확인',
   })
   async verifyEmailCode(
     @Body() verifyEmailRequestDto: VerifyEmailRequestDto,
