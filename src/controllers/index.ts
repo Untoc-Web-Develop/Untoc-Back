@@ -6,6 +6,8 @@ import { EmailController } from 'src/controllers/email.controller';
 import { PostController } from 'src/controllers/post.controller';
 import { WhitelistController } from 'src/controllers/whitelist.controller';
 
+import { TeamController } from './team.controller';
+
 export default [
   AuthController,
   AboutController,
@@ -14,4 +16,5 @@ export default [
   EmailController,
   BoardController,
   PostController,
+  TeamController,
 ];

@@ -10,6 +10,8 @@ import { PostService } from 'src/services/post/post.service';
 import { UserService } from 'src/services/user/user.service';
 import { WhitelistService } from 'src/services/whitelist/whitelist.service';
 
+import { TeamService } from './team/team.service';
+
 export default [
   AboutService,
   ApplyService,
@@ -21,4 +23,5 @@ export default [
   EmailService,
   BoardService,
   PostService,
+  TeamService,
 ];
