@@ -7,7 +7,7 @@ export class Board extends BaseEntity {
   @Column({ name: 'title' })
   title: string;
 
-  @OneToMany(() => Post, (post) => post.board)
+  @OneToMany(() => Post, (post) => post.board, { nullable: true })
   posts: Post[];
 
   @Column({ name: 'discordHook' })

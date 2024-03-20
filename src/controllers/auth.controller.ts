@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Patch,
   Post,
   Req,
   Res,
@@ -17,6 +18,8 @@ import {
 import { Request, Response } from 'express';
 import { AuthService } from 'src/services/auth/auth.service';
 import { LoginRequestDto } from 'src/services/auth/dto/login.dto';
+import { PasswordChangeRequestDto } from 'src/services/auth/dto/patch-password.dto';
+import { ForgetPasswordRequestDto } from 'src/services/auth/dto/post-forget.dto';
 import { RegisterRequestDto } from 'src/services/auth/dto/register.dto';
 import { LoginAuthGuard } from 'src/services/auth/guard/login.guard';
 import { AccessPayload } from 'src/services/auth/payload/access.payload';
@@ -98,6 +101,36 @@ export class AuthController {
       userId: user.id,
       username: user.username,
     };
+  }
+
+  @Post('/forgot-password')
+  @ApiOperation({ summary: '비밀번호 재설정' })
+  @ApiBody({
+    type: ForgetPasswordRequestDto,
+    description: '이메일로 비밀번호 재설정',
+  })
+  async forgetPassword(
+    @Body() forgetPasswordRequestDto: ForgetPasswordRequestDto,
+  ) {
+    return await this.authService.forgetPasswordChange(
+      forgetPasswordRequestDto.email,
+    );
+  }
+
+  @Patch('/change-password')
+  @ApiOperation({ summary: '비밀번호 변경' })
+  @UseGuards(LoginAuthGuard)
+  @ApiBody({
+    type: PasswordChangeRequestDto,
+    description: '이메일로 비밀번호 변경',
+  })
+  async changePassword(
+    @Body() passwordChangeRequestDto: PasswordChangeRequestDto,
+  ) {
+    return await this.authService.passwordChange(
+      passwordChangeRequestDto.email,
+      passwordChangeRequestDto.newPassword,
+    );
   }
 
   @Get('/login-check')

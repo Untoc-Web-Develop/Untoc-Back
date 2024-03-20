@@ -1,15 +1,20 @@
+import { randomBytes } from 'crypto';
+
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import ERROR from 'src/common/error';
+import { Email } from 'src/entities/email.entity';
 import { User } from 'src/entities/user.entity';
 import { Whitelist } from 'src/entities/whitelist.entity';
 import { RegisterRequestDto } from 'src/services/auth/dto/register.dto';
 import { AccessPayload } from 'src/services/auth/payload/access.payload';
 import { RefreshPayload } from 'src/services/auth/payload/refresh.payload';
 import { Repository } from 'typeorm';
+
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class AuthService {
@@ -20,8 +25,12 @@ export class AuthService {
     @InjectRepository(Whitelist)
     private readonly whitelistRepository: Repository<Whitelist>,
 
+    @InjectRepository(Email)
+    private readonly emailRepository: Repository<Email>,
+
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
+    private readonly emailService: EmailService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<User> {
@@ -64,6 +73,18 @@ export class AuthService {
       throw ERROR.NOT_WHITELISTED;
     }
 
+    const email = await this.emailRepository.findOne({
+      where: { email: request.email },
+    });
+
+    if (!email) {
+      throw ERROR.NOT_FOUND;
+    }
+
+    if (email?.isVerified === false) {
+      throw ERROR.UNAUTHORIZED;
+    }
+
     const encryptedPassword = await bcrypt.hash(
       request.password,
       parseInt(this.configService.get('HASH_NUMBER')),
@@ -76,6 +97,39 @@ export class AuthService {
       studentId: request.studentId,
     });
     return newUser;
+  }
+
+  async forgetPasswordChange(email: string): Promise<string> {
+    const user = await this.userRepository.findOne({
+      where: { email },
+    });
+    if (!user) {
+      throw ERROR.NOT_FOUND;
+    } else {
+      const generatedPassword = this.generatePassword();
+      this.emailService.sendPasswordResetEmail(email, generatedPassword);
+      user.password = await bcrypt.hash(
+        generatedPassword,
+        parseInt(this.configService.get('HASH_NUMBER')),
+      );
+      await this.userRepository.save(user);
+      return user.id;
+    }
+  }
+
+  async passwordChange(email: string, newPassword: string): Promise<void> {
+    const user = await this.userRepository.findOne({
+      where: { email },
+    });
+    if (!user) {
+      throw ERROR.NOT_FOUND;
+    } else {
+      user.password = await bcrypt.hash(
+        newPassword,
+        parseInt(this.configService.get('HASH_NUMBER')),
+      );
+      await this.userRepository.save(user);
+    }
   }
 
   async generateAccessToken(user: User): Promise<string> {
@@ -149,5 +203,10 @@ export class AuthService {
 
   async clearRefreshToken(userId: string): Promise<void> {
     await this.userRepository.update({ id: userId }, { refreshToken: null });
+  }
+
+  private generatePassword(): string {
+    const buffer = randomBytes(7);
+    return buffer.toString('hex').toUpperCase().slice(0, 14);
   }
 }
