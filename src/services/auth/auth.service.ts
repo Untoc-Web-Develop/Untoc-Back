@@ -65,7 +65,7 @@ export class AuthService {
       where: {
         email: request.email,
         studentId: request.studentId,
-        phoneNumber: request.phoneNumber,
+        name: request.username,
       },
     });
 
