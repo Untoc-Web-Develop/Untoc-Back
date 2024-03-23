@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Patch,
   Post,
   Req,
@@ -23,11 +24,17 @@ import { ForgetPasswordRequestDto } from 'src/services/auth/dto/post-forget.dto'
 import { RegisterRequestDto } from 'src/services/auth/dto/register.dto';
 import { LoginAuthGuard } from 'src/services/auth/guard/login.guard';
 import { AccessPayload } from 'src/services/auth/payload/access.payload';
+import { UserService } from 'src/services/user/user.service';
+import { WhitelistService } from 'src/services/whitelist/whitelist.service';
 
 @Controller('')
 @ApiTags('Auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly userService: UserService,
+    private readonly whitelistService: WhitelistService,
+  ) {}
 
   @Post('/login')
   @ApiOperation({ summary: '로그인' })
@@ -156,5 +163,19 @@ export class AuthController {
   @UseGuards(LoginAuthGuard)
   async getUser() {
     return this.authService.getUsers();
+  }
+
+  @Patch('/activation/:id')
+  @ApiOperation({ summary: '계정 활성화 변경' })
+  @UseGuards(LoginAuthGuard)
+  async patchActivation(
+    @Req() req: Request,
+    @Param('id') id: string,
+    @Body() { activation }: { activation: boolean },
+  ) {
+    const userId = (req.user as AccessPayload).userId;
+    if (await this.userService.checkBadgeForAuth(userId, 'admin')) {
+      return await this.authService.changeActivation(id, activation);
+    }
   }
 }

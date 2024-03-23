@@ -9,4 +9,5 @@ export class GetUsersResponseDto extends PickType(User, [
   'phoneNumber',
   'studentId',
   'badges',
+  'activation',
 ]) {}

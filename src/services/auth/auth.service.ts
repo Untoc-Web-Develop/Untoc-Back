@@ -62,7 +62,7 @@ export class AuthService {
       throw ERROR.ALREADY_EXISTS;
     }
 
-    const whitelist = await this.whitelistRepository.find({
+    const whitelist = await this.whitelistRepository.findOne({
       where: {
         email: request.email,
         studentId: request.studentId,
@@ -70,7 +70,7 @@ export class AuthService {
       },
     });
 
-    if (whitelist.length === 0) {
+    if (!whitelist) {
       throw ERROR.NOT_WHITELISTED;
     }
 
@@ -93,6 +93,7 @@ export class AuthService {
     const newUser = await this.userRepository.save({
       username: request.username,
       email: request.email,
+      generation: whitelist.generation,
       password: encryptedPassword,
       phoneNumber: request.phoneNumber,
       studentId: request.studentId,
@@ -211,6 +212,16 @@ export class AuthService {
     return buffer.toString('hex').toUpperCase().slice(0, 14);
   }
 
+  async changeActivation(
+    userId: string,
+    activationState: boolean,
+  ): Promise<void> {
+    await this.userRepository.update(
+      { id: userId },
+      { activation: activationState },
+    );
+  }
+
   async getUsers(): Promise<GetUsersResponseDto[]> {
     const users = await this.userRepository.find({
       relations: ['badges'],
@@ -225,6 +236,7 @@ export class AuthService {
       studentId: user.studentId,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
+      activation: user.activation,
     }));
   }
 }
