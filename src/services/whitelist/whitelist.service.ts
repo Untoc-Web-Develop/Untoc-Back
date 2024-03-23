@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import ERROR from 'src/common/error';
 import { Whitelist } from 'src/entities/whitelist.entity';
 import { GetWhiteListResponseDto } from 'src/services/whitelist/dto/get-whitelist.dto';
 import {
@@ -16,12 +17,14 @@ export class WhitelistService {
   ) {}
 
   async findAll(): Promise<GetWhiteListResponseDto> {
-    const whitelists: Array<Whitelist> = await this.whitelistRepository.find();
+    const whitelists: Array<Whitelist> = await this.whitelistRepository.find({
+      order: { name: 'ASC' },
+    });
 
     return {
       whitelists: whitelists.map((whitelist) => ({
         id: whitelist.id,
-        phoneNumber: whitelist.phoneNumber,
+        name: whitelist.name,
         email: whitelist.email,
         studentId: whitelist.studentId,
         createdAt: whitelist.createdAt,
@@ -33,6 +36,11 @@ export class WhitelistService {
   async create(
     newWhitelist: PostWhitelistRequestDto,
   ): Promise<PostWhitelistResponseDto> {
+    const isExist = await this.whitelistRepository.findOne({
+      where: { email: newWhitelist.email, studentId: newWhitelist.studentId },
+    });
+    if (isExist) throw ERROR.ALREADY_EXISTS;
+
     const Whitelist = await this.whitelistRepository.save(newWhitelist);
 
     return {

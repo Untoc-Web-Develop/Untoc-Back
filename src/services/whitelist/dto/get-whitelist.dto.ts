@@ -4,7 +4,7 @@ import { Whitelist } from 'src/entities/whitelist.entity';
 
 class WhiteListDto extends PickType(Whitelist, [
   ...baseDtoKey,
-  'phoneNumber',
+  'name',
   'email',
   'studentId',
 ]) {}
