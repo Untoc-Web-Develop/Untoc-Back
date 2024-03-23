@@ -27,6 +27,7 @@ export class WhitelistService {
         name: whitelist.name,
         email: whitelist.email,
         studentId: whitelist.studentId,
+        generation: whitelist.generation,
         createdAt: whitelist.createdAt,
         updatedAt: whitelist.updatedAt,
       })),
