@@ -150,4 +150,11 @@ export class AuthController {
     res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
   }
+
+  @Get('/users')
+  @ApiOperation({ summary: '유저 정보 조회' })
+  @UseGuards(LoginAuthGuard)
+  async getUser() {
+    return this.authService.getUsers();
+  }
 }
