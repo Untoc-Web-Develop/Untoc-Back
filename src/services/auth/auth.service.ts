@@ -95,6 +95,7 @@ export class AuthService {
       password: encryptedPassword,
       phoneNumber: request.phoneNumber,
       studentId: request.studentId,
+      badges: [],
     });
     return newUser;
   }
