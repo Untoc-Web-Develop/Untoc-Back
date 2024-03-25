@@ -14,6 +14,9 @@ export class User extends BaseEntity {
   @Column({ name: 'email', unique: true })
   email: string;
 
+  @Column({ name: 'generation' })
+  generation: number;
+
   @Column({ name: 'password' })
   password: string;
 
@@ -25,6 +28,9 @@ export class User extends BaseEntity {
 
   @Column({ name: 'student_id', unique: true })
   studentId: string;
+
+  @Column({ name: 'activation', default: true })
+  activation: boolean;
 
   @ManyToMany(() => Badge, (badge) => badge.users)
   @JoinTable({ name: 'user_badge' })

@@ -14,6 +14,7 @@ import { AccessPayload } from 'src/services/auth/payload/access.payload';
 import { RefreshPayload } from 'src/services/auth/payload/refresh.payload';
 import { Repository } from 'typeorm';
 
+import { GetUsersResponseDto } from './dto/get-users.dto';
 import { EmailService } from '../email/email.service';
 
 @Injectable()
@@ -61,7 +62,7 @@ export class AuthService {
       throw ERROR.ALREADY_EXISTS;
     }
 
-    const whitelist = await this.whitelistRepository.find({
+    const whitelist = await this.whitelistRepository.findOne({
       where: {
         email: request.email,
         studentId: request.studentId,
@@ -69,7 +70,7 @@ export class AuthService {
       },
     });
 
-    if (whitelist.length === 0) {
+    if (!whitelist) {
       throw ERROR.NOT_WHITELISTED;
     }
 
@@ -92,6 +93,7 @@ export class AuthService {
     const newUser = await this.userRepository.save({
       username: request.username,
       email: request.email,
+      generation: whitelist.generation,
       password: encryptedPassword,
       phoneNumber: request.phoneNumber,
       studentId: request.studentId,
@@ -106,7 +108,7 @@ export class AuthService {
     if (!user) {
       throw ERROR.NOT_FOUND;
     } else {
-      const generatedPassword = this.generatePassword();
+      const generatedPassword = await this.generatePassword();
       this.emailService.sendPasswordResetEmail(email, generatedPassword);
       user.password = await bcrypt.hash(
         generatedPassword,
@@ -205,8 +207,36 @@ export class AuthService {
     await this.userRepository.update({ id: userId }, { refreshToken: null });
   }
 
-  private generatePassword(): string {
+  private async generatePassword(): Promise<string> {
     const buffer = randomBytes(7);
     return buffer.toString('hex').toUpperCase().slice(0, 14);
+  }
+
+  async changeActivation(
+    userId: string,
+    activationState: boolean,
+  ): Promise<void> {
+    await this.userRepository.update(
+      { id: userId },
+      { activation: activationState },
+    );
+  }
+
+  async getUsers(): Promise<GetUsersResponseDto[]> {
+    const users = await this.userRepository.find({
+      relations: ['badges'],
+      order: { studentId: 'ASC' },
+    });
+    return users.map((user) => ({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      badges: user.badges,
+      phoneNumber: user.phoneNumber,
+      studentId: user.studentId,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      activation: user.activation,
+    }));
   }
 }
